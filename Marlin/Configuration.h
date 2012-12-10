@@ -237,17 +237,17 @@ const bool Z_ENDSTOPS_INVERTING = false; // set to true to invert the logic of t
 // M501 - reads parameters from EEPROM (if you need reset them after you changed them temporarily).  
 // M502 - reverts to the default "factory settings".  You still need to store them in EEPROM afterwards if you want to.
 //define this to enable eeprom support
-//#define EEPROM_SETTINGS
+#define EEPROM_SETTINGS
 //to disable EEPROM Serial responses and decrease program space by ~1700 byte: comment this out:
 // please keep turned on if you can.
-//#define EEPROM_CHITCHAT
+#define EEPROM_CHITCHAT
 
 //LCD and SD support
 //#define ULTRA_LCD  //general lcd support, also 16x2
 //#define SDSUPPORT // Enable SD Card Support in Hardware Console
 
 //#define ULTIMAKERCONTROLLER //as available from the ultimaker online store.
-//#define ULTIPANEL  //the ultipanel as on thingiverse
+#define ULTIPANEL  //the ultipanel as on thingiverse
 
 
 #ifdef ULTIMAKERCONTROLLER    //automatic expansion
@@ -257,7 +257,7 @@ const bool Z_ENDSTOPS_INVERTING = false; // set to true to invert the logic of t
  
 
 #ifdef ULTIPANEL
-//  #define NEWPANEL  //enable this if you have a click-encoder panel
+  #define NEWPANEL  //enable this if you have a click-encoder panel
   #define SDSUPPORT
   #define ULTRA_LCD
   #define LCD_WIDTH 20
@@ -268,7 +268,7 @@ const bool Z_ENDSTOPS_INVERTING = false; // set to true to invert the logic of t
   #define PLA_PREHEAT_HPB_TEMP 70
   #define PLA_PREHEAT_FAN_SPEED 255		// Insert Value between 0 and 255
 
-  #define ABS_PREHEAT_HOTEND_TEMP 240
+  #define ABS_PREHEAT_HOTEND_TEMP 230
   #define ABS_PREHEAT_HPB_TEMP 100
   #define ABS_PREHEAT_FAN_SPEED 255		// Insert Value between 0 and 255
 

@@ -308,25 +308,25 @@
 
   #ifdef NEWPANEL
   //arduino pin which triggers an piezzo beeper
-    #define BEEPER 33			// Beeper on AUX-4
+    #define BEEPER 32			// Beeper on AUX-4
 
-    #define LCD_PINS_RS 16 
-    #define LCD_PINS_ENABLE 17
-    #define LCD_PINS_D4 23
-    #define LCD_PINS_D5 25 
-    #define LCD_PINS_D6 27
-    #define LCD_PINS_D7 29
+    #define LCD_PINS_RS 63 
+    #define LCD_PINS_ENABLE 65
+    #define LCD_PINS_D4 59
+    #define LCD_PINS_D5 64 
+    #define LCD_PINS_D6 44
+    #define LCD_PINS_D7 66
     
     //buttons are directly attached using AUX-2
-    #define BTN_EN1 37
-    #define BTN_EN2 35
-    #define BTN_ENC 31  //the click
+    #define BTN_EN1 6
+    #define BTN_EN2 5
+    #define BTN_ENC 4  //the click
     
     #define BLEN_C 2
     #define BLEN_B 1
     #define BLEN_A 0
     
-    #define SDCARDDETECT -1		// Ramps does not use this port
+    #define SDCARDDETECT 42		// Ramps does not use this port
     
       //encoder rotation values
     #define encrot0 0
