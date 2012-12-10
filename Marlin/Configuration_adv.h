@@ -5,19 +5,18 @@
 //=============================Thermal Settings  ============================
 //===========================================================================
 
-// Select one of these only to define how the bed temp is read.
-//
-//#define BED_LIMIT_SWITCHING
 #ifdef BED_LIMIT_SWITCHING
   #define BED_HYSTERESIS 2 //only disable heating if T>target+BED_HYSTERESIS and enable heating if T>target-BED_HYSTERESIS
 #endif
-#define BED_CHECK_INTERVAL 5000 //ms
+#define BED_CHECK_INTERVAL 5000 //ms between checks in bang-bang control
 
 //// Heating sanity check:
 // This waits for the watchperiod in milliseconds whenever an M104 or M109 increases the target temperature
 // If the temperature has not increased at the end of that period, the target temperature is set to zero. 
-// It can be reset with another M104/M109
-//#define WATCHPERIOD 20000 //20 seconds
+// It can be reset with another M104/M109. This check is also only triggered if the target temperature and the current temperature
+//  differ by at least 2x WATCH_TEMP_INCREASE
+//#define WATCH_TEMP_PERIOD 20000 //20 seconds
+//#define WATCH_TEMP_INCREASE 10  //Heat up at least 10 degree in 20 seconds
 
 // Wait for Cooldown
 // This defines if the M109 call should not block if it is cooling down.
@@ -76,6 +75,54 @@
 
 #define ENDSTOPS_ONLY_FOR_HOMING // If defined the endstops will only be used for homing
 
+
+//// AUTOSET LOCATIONS OF LIMIT SWITCHES
+//// Added by ZetaPhoenix 09-15-2012
+#ifdef MANUAL_HOME_POSITION  //Use manual limit switch locations
+  #define X_HOME_POS MANUAL_X_HOME_POS
+  #define Y_HOME_POS MANUAL_Y_HOME_POS
+  #define Z_HOME_POS MANUAL_Z_HOME_POS
+#else //Set min/max homing switch positions based upon homing direction and min/max travel limits
+  //X axis
+  #if X_HOME_DIR == -1
+    #ifdef BED_CENTER_AT_0_0
+      #define X_HOME_POS X_MAX_LENGTH * -0.5
+    #else
+      #define X_HOME_POS X_MIN_POS
+    #endif //BED_CENTER_AT_0_0
+  #else    
+    #ifdef BED_CENTER_AT_0_0
+      #define X_HOME_POS X_MAX_LENGTH * 0.5
+    #else
+      #define X_HOME_POS X_MAX_POS
+    #endif //BED_CENTER_AT_0_0
+  #endif //X_HOME_DIR == -1
+  
+  //Y axis
+  #if Y_HOME_DIR == -1
+    #ifdef BED_CENTER_AT_0_0
+      #define Y_HOME_POS Y_MAX_LENGTH * -0.5
+    #else
+      #define Y_HOME_POS Y_MIN_POS
+    #endif //BED_CENTER_AT_0_0
+  #else    
+    #ifdef BED_CENTER_AT_0_0
+      #define Y_HOME_POS Y_MAX_LENGTH * 0.5
+    #else
+      #define Y_HOME_POS Y_MAX_POS
+    #endif //BED_CENTER_AT_0_0
+  #endif //Y_HOME_DIR == -1
+  
+  // Z axis
+  #if Z_HOME_DIR == -1 //BED_CENTER_AT_0_0 not used
+    #define Z_HOME_POS Z_MIN_POS
+  #else    
+    #define Z_HOME_POS Z_MAX_POS
+  #endif //Z_HOME_DIR == -1
+#endif //End auto min/max positions
+//END AUTOSET LOCATIONS OF LIMIT SWITCHES -ZP
+
+
 //#define Z_LATE_ENABLE // Enable Z the last moment. Needed if your Z driver overheats.
 
 // A single Z stepper driver is usually used to drive 2 stepper motors.
@@ -128,23 +175,37 @@
 // if unwanted behavior is observed on a user's machine when running at very slow speeds.
 #define MINIMUM_PLANNER_SPEED 0.05// (mm/sec)
 
+// MS1 MS2 Stepper Driver Microstepping mode table
+#define MICROSTEP1 LOW,LOW
+#define MICROSTEP2 HIGH,LOW
+#define MICROSTEP4 LOW,HIGH
+#define MICROSTEP8 HIGH,HIGH
+#define MICROSTEP16 HIGH,HIGH
+
+// Microstep setting (Only functional when stepper driver microstep pins are connected to MCU.
+#define MICROSTEP_MODES {16,16,16,16,16} // [1,2,4,8,16]
+
+// Motor Current setting (Only functional when motor driver current ref pins are connected to a digital trimpot on supported boards)
+#define DIGIPOT_MOTOR_CURRENT {135,135,135,135,135} // Values 0-255 (RAMBO 135 = ~0.75A, 185 = ~1A)
+
+
 //===========================================================================
 //=============================Additional Features===========================
 //===========================================================================
 
 
 #define SD_FINISHED_STEPPERRELEASE true  //if sd support and the file is finished: disable steppers?
-#define SD_FINISHED_RELEASECOMMAND "M84 X Y Z E" // no z because of layer shift.
+#define SD_FINISHED_RELEASECOMMAND "M84 X Y Z E" // You might want to keep the z enabled so your bed stays in place.
 
-// The hardware watchdog should halt the Microcontroller, in case the firmware gets stuck somewhere. However:
-// the Watchdog is not working well, so please only enable this for testing
-// this enables the watchdog interrupt.
+// The hardware watchdog should reset the Microcontroller disabling all outputs, in case the firmware gets stuck and doesn't do temperature regulation.
 //#define USE_WATCHDOG
-//#ifdef USE_WATCHDOG
-  // you cannot reboot on a mega2560 due to a bug in he bootloader. Hence, you have to reset manually, and this is done hereby:
-//#define RESET_MANUAL
-//#define WATCHDOG_TIMEOUT 4  //seconds
-//#endif
+
+#ifdef USE_WATCHDOG
+// If you have a watchdog reboot in an ArduinoMega2560 then the device will hang forever, as a watchdog reset will leave the watchdog on.
+// The "WATCHDOG_RESET_MANUAL" goes around this by not using the hardware reset.
+//  However, THIS FEATURE IS UNSAFE!, as it will only work if interrupts are disabled. And the code could hang in an interrupt routine with interrupts disabled.
+//#define WATCHDOG_RESET_MANUAL
+#endif
 
 // extruder advance constant (s2/mm3)
 //
@@ -169,7 +230,7 @@
 #define MM_PER_ARC_SEGMENT 1
 #define N_ARC_CORRECTION 25
 
-const int dropsegments=5; //everything with less than this number of steps will be ignored as move and joined with the next movement
+const unsigned int dropsegments=5; //everything with less than this number of steps will be ignored as move and joined with the next movement
 
 // If you are using a RAMPS board or cheap E-bay purchased boards that do not detect when an SD card is inserted
 // You can get round this by connecting a push button or single throw switch to the pin defined as SDCARDCARDDETECT 

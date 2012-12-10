@@ -1,37 +1,50 @@
 #ifndef ULTRALCD_H
 #define ULTRALCD_H
+
 #include "Marlin.h"
+
 #ifdef ULTRA_LCD
+
+  #if LANGUAGE_CHOICE == 6
+  #include "LiquidCrystalRus.h"
+  #define LCD_CLASS LiquidCrystalRus
+  #else
   #include <LiquidCrystal.h>
-  void lcd_status();
+  #define LCD_CLASS LiquidCrystal
+  #endif
+
+  void lcd_update();
   void lcd_init();
-  void lcd_status(const char* message);
-  void beep();
-  void buttons_init();
-  void buttons_check();
+  void lcd_setstatus(const char* message);
+  void lcd_setstatuspgm(const char* message);
+  void lcd_setalertstatuspgm(const char* message);
+  void lcd_buttons_update();
+  void lcd_buttons_init();
+
+  #define LCD_MESSAGEPGM(x) lcd_setstatuspgm(PSTR(x))
+  #define LCD_ALERTMESSAGEPGM(x) lcd_setalertstatuspgm(PSTR(x))
 
   #define LCD_UPDATE_INTERVAL 100
-  #define STATUSTIMEOUT 15000
-  extern LiquidCrystal lcd;
-  extern volatile char buttons;  //the last checked buttons in a bit array.
-  
+  #define LCD_TIMEOUT_TO_STATUS 15000
+
+  extern volatile uint8_t buttons;  //the last checked buttons in a bit array.
+
+  extern int plaPreheatHotendTemp;
+  extern int plaPreheatHPBTemp;
+  extern int plaPreheatFanSpeed;
+
+  extern int absPreheatHotendTemp;
+  extern int absPreheatHPBTemp;
+  extern int absPreheatFanSpeed;
+    
   #ifdef NEWPANEL
     #define EN_C (1<<BLEN_C)
     #define EN_B (1<<BLEN_B)
     #define EN_A (1<<BLEN_A)
-    
-    #define CLICKED (buttons&EN_C)
-    #define BLOCK {blocking=millis()+blocktime;}
-    #if (SDCARDDETECT > -1)
-      #ifdef SDCARDDETECTINVERTED 
-        #define CARDINSERTED (READ(SDCARDDETECT)!=0)
-      #else
-        #define CARDINSERTED (READ(SDCARDDETECT)==0)
-      #endif
-    #endif  //SDCARDTETECTINVERTED
 
+    #define LCD_CLICKED (buttons&EN_C)
+    #define LCD_BLOCK {blocking=millis()+blocktime;}
   #else
-
     //atomatic, do not change
     #define B_LE (1<<BL_LE)
     #define B_UP (1<<BL_UP)
@@ -42,19 +55,18 @@
     #define EN_B (1<<BLEN_B)
     #define EN_A (1<<BLEN_A)
     
-    #define CLICKED ((buttons&B_MI)||(buttons&B_ST))
-    #define BLOCK {blocking[BL_MI]=millis()+blocktime;blocking[BL_ST]=millis()+blocktime;}
-    
+    #define LCD_CLICKED ((buttons&B_MI)||(buttons&B_ST))
+    #define LCD_BLOCK {blocking[BL_MI]=millis()+blocktime;blocking[BL_ST]=millis()+blocktime;}
   #endif
 
-
-    
   // blocking time for recognizing a new keypress of one key, ms
   #define blocktime 500
   #define lcdslow 5
     
   enum MainStatus{Main_Status, Main_Menu, Main_Prepare,Sub_PrepareMove, Main_Control, Main_SD,Sub_TempControl,Sub_MotionControl,Sub_RetractControl, Sub_PreheatPLASettings, Sub_PreheatABSSettings};
-
+  
+  extern LCD_CLASS lcd;
+  
   class MainMenu{
   public:
     MainMenu();
@@ -133,40 +145,29 @@
       } 
     }
   };
-
-  //conversion routines, could need some overworking
-  char *ftostr51(const float &x);
-  char *ftostr52(const float &x);
-  char *ftostr31(const float &x);
-  char *ftostr3(const float &x);
-
-
-  #define LCD_INIT lcd_init();
-  #define LCD_MESSAGE(x) lcd_status(x);
-  #define LCD_MESSAGEPGM(x) lcd_statuspgm(MYPGM(x));
-  #define LCD_ALERTMESSAGEPGM(x) lcd_alertstatuspgm(MYPGM(x));
-  #define LCD_STATUS lcd_status()
 #else //no lcd
-  #define LCD_INIT
-  #define LCD_STATUS
-  #define LCD_MESSAGE(x)
-  #define LCD_MESSAGEPGM(x)
-  #define LCD_ALERTMESSAGEPGM(x)
-  FORCE_INLINE void lcd_status() {};
+  FORCE_INLINE void lcd_update() {}
+  FORCE_INLINE void lcd_init() {}
+  FORCE_INLINE void lcd_setstatus(const char* message) {}
+  FORCE_INLINE void lcd_buttons_init() {}
+  FORCE_INLINE void lcd_buttons_update() {}
+
+  #define LCD_MESSAGEPGM(x) 
+  #define LCD_ALERTMESSAGEPGM(x) 
 
   #define CLICKED false
   #define BLOCK ;
 #endif 
-  
-void lcd_statuspgm(const char* message);
-void lcd_alertstatuspgm(const char* message);
-  
-char *ftostr3(const float &x);
+
 char *itostr2(const uint8_t &x);
-char *ftostr31(const float &x);
-char *ftostr32(const float &x);
 char *itostr31(const int &xx);
 char *itostr3(const int &xx);
 char *itostr4(const int &xx);
+
+char *ftostr3(const float &x);
+char *ftostr31(const float &x);
+char *ftostr32(const float &x);
 char *ftostr51(const float &x);
+char *ftostr52(const float &x);
+
 #endif //ULTRALCD
