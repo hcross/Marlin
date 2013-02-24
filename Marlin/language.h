@@ -26,7 +26,7 @@
 	#define MACHINE_NAME "Ultimaker"
 	#define FIRMWARE_URL "http://firmware.ultimaker.com"
 #else
-	#define MACHINE_NAME "Mendel"
+	#define MACHINE_NAME "MendelMax 1.5"
 	#define FIRMWARE_URL "http://www.mendel-parts.com"
 #endif
 
