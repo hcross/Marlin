@@ -14,10 +14,10 @@
 // SERIAL_PORT selects which serial port should be used for communication with the host.
 // This allows the connection of wireless adapters (for instance) to non-default port pins.
 // Serial port 0 is still used by the Arduino bootloader regardless of this setting.
-#define SERIAL_PORT 2
+#define SERIAL_PORT 0
 
 // This determines the communication speed of the printer
-#define BAUDRATE 115200
+#define BAUDRATE 250000
 //#define BAUDRATE 115200
 
 //// The following define selects which electronics board you have. Please choose the one that matches your setup
@@ -45,7 +45,7 @@
 // 91 = Final OMCA board
 // 301 = Rambo
 #ifndef MOTHERBOARD
-#define MOTHERBOARD 33
+#define MOTHERBOARD 81
 #endif
 
 //// The following define selects which power supply you have. Please choose the one that matches your setup
@@ -82,14 +82,14 @@
 // 55 is 100k thermistor - ATC Semitec 104GT-2 (Used in ParCan) (1k pullup)
 // 81 is 4k 657-GC1396V-3-200 in SeeMeCNC H-1 kit
 
-#define TEMP_SENSOR_0 7
+#define TEMP_SENSOR_0 1
 #define TEMP_SENSOR_1 0
 #define TEMP_SENSOR_2 0
-#define TEMP_SENSOR_BED 1
+#define TEMP_SENSOR_BED 6
 
 // Actual temperature must be close to target for this long before M109 returns success
-#define TEMP_RESIDENCY_TIME 10	// (seconds)
-#define TEMP_HYSTERESIS 3       // (degC) range of +/- temperatures considered "close" to the target one
+#define TEMP_RESIDENCY_TIME 1	// (seconds)
+#define TEMP_HYSTERESIS 4       // (degC) range of +/- temperatures considered "close" to the target one
 #define TEMP_WINDOW     1       // (degC) Window around target to start the recidency timer x degC early.
 
 // The minimal temperature defines the temperature below which the heater will not be enabled It is used
@@ -103,9 +103,9 @@
 // When temperature exceeds max temp, your heater will be switched off.
 // This feature exists to protect your hotend from overheating accidentally, but *NOT* from thermistor short/failure!
 // You should use MINTEMP for thermistor short/failure protection.
-#define HEATER_0_MAXTEMP 275
-#define HEATER_1_MAXTEMP 275
-#define HEATER_2_MAXTEMP 275
+#define HEATER_0_MAXTEMP 250
+#define HEATER_1_MAXTEMP 250
+#define HEATER_2_MAXTEMP 250
 #define BED_MAXTEMP 150
 
 // If your bed has low resistance e.g. .6 ohm and throws the fuse you can duty cycle it to reduce the
@@ -235,11 +235,11 @@ const bool Z_ENDSTOPS_INVERTING = false; // set to true to invert the logic of t
 #define DISABLE_X false
 #define DISABLE_Y false
 #define DISABLE_Z true
-#define DISABLE_E true // For all extruders
+#define DISABLE_E false // For all extruders
 
-#define INVERT_X_DIR false    // for Mendel set to false, for Orca set to true
+#define INVERT_X_DIR true    // for Mendel set to false, for Orca set to true
 #define INVERT_Y_DIR true    // for Mendel set to true, for Orca set to false
-#define INVERT_Z_DIR false     // for Mendel set to false, for Orca set to true
+#define INVERT_Z_DIR true     // for Mendel set to false, for Orca set to true
 #define INVERT_E0_DIR false   // for direct drive extruder v9 set to true, for geared extruder set to false
 #define INVERT_E1_DIR false    // for direct drive extruder v9 set to true, for geared extruder set to false
 #define INVERT_E2_DIR false   // for direct drive extruder v9 set to true, for geared extruder set to false
@@ -253,11 +253,11 @@ const bool Z_ENDSTOPS_INVERTING = false; // set to true to invert the logic of t
 #define min_software_endstops true //If true, axis won't move to coordinates less than HOME_POS.
 #define max_software_endstops true  //If true, axis won't move to coordinates greater than the defined lengths below.
 // Travel limits after homing
-#define X_MAX_POS 180
+#define X_MAX_POS 185
 #define X_MIN_POS 0
-#define Y_MAX_POS 240
+#define Y_MAX_POS 220
 #define Y_MIN_POS 0
-#define Z_MAX_POS 150
+#define Z_MAX_POS 585
 #define Z_MIN_POS 0
 
 #define X_MAX_LENGTH (X_MAX_POS - X_MIN_POS)
@@ -279,15 +279,15 @@ const bool Z_ENDSTOPS_INVERTING = false; // set to true to invert the logic of t
 
 // default settings 
 
-#define DEFAULT_AXIS_STEPS_PER_UNIT   {80,80,1511.81102362205,761.328}  // default steps per unit for ultimaker 
-#define DEFAULT_MAX_FEEDRATE          {500, 500, 5, 200}    // (mm/sec)    
-#define DEFAULT_MAX_ACCELERATION      {2000,2000,50,500}    // X, Y, Z, E maximum start speed for accelerated moves. E default values are good for skeinforge 40+, for older versions raise them a lot.
+#define DEFAULT_AXIS_STEPS_PER_UNIT   {80,80,2387.0719,761.328}  // default steps per unit for ultimaker 
+#define DEFAULT_MAX_FEEDRATE          {180, 180, 5, 20}    // (mm/sec)    
+#define DEFAULT_MAX_ACCELERATION      {2000,2000,30,10000}    // X, Y, Z, E maximum start speed for accelerated moves. E default values are good for skeinforge 40+, for older versions raise them a lot.
 
-#define DEFAULT_ACCELERATION          4000    // X, Y, Z and E max acceleration in mm/s^2 for printing moves 
-#define DEFAULT_RETRACT_ACCELERATION  1000   // X, Y, Z and E max acceleration in mm/s^2 for r retracts
+#define DEFAULT_ACCELERATION          3000    // X, Y, Z and E max acceleration in mm/s^2 for printing moves 
+#define DEFAULT_RETRACT_ACCELERATION  3000   // X, Y, Z and E max acceleration in mm/s^2 for r retracts
 
 // 
-#define DEFAULT_XYJERK                5.0    // (mm/sec)
+#define DEFAULT_XYJERK                20.0    // (mm/sec)
 #define DEFAULT_ZJERK                 0.4     // (mm/sec)
 #define DEFAULT_EJERK                 5.0    // (mm/sec)
 
@@ -308,10 +308,10 @@ const bool Z_ENDSTOPS_INVERTING = false; // set to true to invert the logic of t
 
 //LCD and SD support
 //#define ULTRA_LCD  //general lcd support, also 16x2
-//#define SDSUPPORT // Enable SD Card Support in Hardware Console
+#define SDSUPPORT // Enable SD Card Support in Hardware Console
 
 //#define ULTIMAKERCONTROLLER //as available from the ultimaker online store.
-#define ULTIPANEL  //the ultipanel as on thingiverse
+//#define ULTIPANEL  //the ultipanel as on thingiverse
 
 // The RepRapDiscount Smart Controller (white PCB)
 // http://reprap.org/wiki/RepRapDiscount_Smart_Controller
