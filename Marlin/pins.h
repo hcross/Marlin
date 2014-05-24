@@ -652,7 +652,7 @@
   #define TEMP_BED_PIN       14   // ANALOG NUMBERING
 
   #ifdef NUM_SERVOS
-    #define SERVO0_PIN         11
+    #define SERVO0_PIN         53
 
     #if NUM_SERVOS > 1
       #define SERVO1_PIN         6
@@ -1685,7 +1685,7 @@
 #else  // Printrboard
   #define X_STOP_PIN         35
   #define Y_STOP_PIN          8
-  #define Z_STOP_PIN         37  // 36 for Z-stop (normal) 37 for E-stop (autolevel)
+  #define Z_STOP_PIN         36  // 36 for Z-stop (normal) 37 for E-stop (autolevel)
   #define TEMP_0_PIN          1  // Extruder / Analog pin numbering
   #define TEMP_BED_PIN        0  // Bed / Analog pin numbering
   
